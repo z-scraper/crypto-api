@@ -11,6 +11,7 @@ on:
 jobs:
   test-and-coveralls:
     runs-on: ubuntu-latest
+    environment: main
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,6 +40,7 @@ jobs:
     needs: test-and-coveralls
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    environment: main
     permissions:
       contents: read
     steps:

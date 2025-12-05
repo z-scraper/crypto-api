@@ -10,7 +10,9 @@
     "javascript",
     "rapidapi",
     "news",
-    "sentiment"
+    "sentiment",
+    "ai",
+    "z-scraper"
   ],
   "repository": {
     "type": "git",
