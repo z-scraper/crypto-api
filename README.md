@@ -64,17 +64,20 @@ const client = new CryptoClient({
 
 ## Quickstart
 
-### Fetch latest news
+### Fetch latest news from a source
 
 ```ts
-import { CryptoClient } from "@z-scraper/crypto-api";
+import { CryptoClient, CryptoSource } from "@z-scraper/crypto-api";
 
 async function main() {
   const client = new CryptoClient({
     apiKey: process.env.RAPIDAPI_KEY as string,
   });
 
-  const news = await client.getNews();
+  const news = await client.getNews({
+    cryptoSource: CryptoSource.Bitcoinist,
+    limit: 20,
+  });
 
   console.log(`Fetched ${news.articles.length} articles`);
   console.log(news.articles[0]);
@@ -83,27 +86,38 @@ async function main() {
 main().catch(console.error);
 ```
 
-### Filter by source & sentiment
+### Get sentiment for a source
 
 ```ts
-const res = await client.getNews({
-  source: "coindesk",
-  sentiment: "positive",
-  limit: 20,
+import { CryptoSource } from "@z-scraper/crypto-api";
+
+const sentiment = await client.getSentiment({
+  cryptoSource: CryptoSource.CoinDesk,
+  interval: "1d",
 });
 
-for (const article of res.articles) {
-  console.log(`[${article.sentiment}] ${article.title}`);
-}
+console.log(sentiment.sentimentSummary);
 ```
 
-### Fetch a single article by ID
+### Fetch article detail
 
 ```ts
-const article = await client.getArticleById("ARTICLE_ID_HERE");
+import { CryptoSource } from "@z-scraper/crypto-api";
+
+const article = await client.getNewsDetail({
+  cryptoSource: CryptoSource.Cointelegraph,
+  slug: "bitcoin-price-surges-to-new-high",
+});
 
 console.log(article.title);
 console.log(article.content);
+```
+
+### Get aggregated articles (all sources)
+
+```ts
+const articles = await client.getArticles("3h");
+console.log(articles.length);
 ```
 
 ---
@@ -130,7 +144,7 @@ interface CryptoClientOptions {
 
   /**
    * Optional base URL override.
-   * Defaults to the public Crypto API base URL.
+   * Defaults to the public RapidAPI Crypto API base URL.
    */
   baseURL?: string;
 
@@ -138,71 +152,46 @@ interface CryptoClientOptions {
    * Optional request timeout in milliseconds.
    * Default: 10_000 (10 seconds)
    */
-  timeoutMs?: number;
+  timeout?: number;
 }
 ```
 
 ---
 
-### `client.getNews(params?)`
+### `client.getNews(options)`
 
-Fetches a list of news articles, optionally filtered by source, sentiment, or date range.
+Fetches paginated news for one source. `options.cryptoSource` is required and drives the rest of the params:
 
-```ts
-interface GetNewsParams {
-  source?: string; // e.g. "coindesk", "cointelegraph"
-  sentiment?: "positive" | "negative" | "neutral";
-  from?: string; // ISO 8601 date, e.g. "2025-01-01"
-  to?: string; // ISO 8601 date
-  limit?: number; // number of articles to return
-  page?: number; // pagination
-}
+- `CryptoSource.Bitcoinist | CoinDesk | Cointelegraph | CryptoDaily | CryptoNews`: supports `page`, `limit`, `search`, and source-specific `category`. CoinDesk/Bitcoinist/CryptoNews also accept `paginationToken`.
+- `CryptoSource.Decrypt`: supports `page`, `limit`, `search`, `category`, `sort`, `isEditorPick`.
 
-interface NewsArticle {
-  id: string;
-  title: string;
-  url: string;
-  source: string;
-  publishedAt: string; // ISO 8601
-  sentiment?: "positive" | "negative" | "neutral";
-  summary?: string;
-  content?: string;
-  [key: string]: unknown;
-}
-
-interface GetNewsResponse {
-  articles: NewsArticle[];
-  total?: number;
-  page?: number;
-  hasMore?: boolean;
-}
-```
-
-**Example:**
-
-```ts
-const result = await client.getNews({
-  source: "coindesk",
-  sentiment: "negative",
-  limit: 10,
-});
-
-console.log(result.articles.map((a) => a.title));
-```
+Returns `{ articles: Article[]; hasMore: boolean }`. Date-like fields are returned as `Date` instances (`time`, `publishedAt`).
 
 ---
 
-### `client.getArticleById(id)`
+### `client.getNewsDetail(options)`
 
-Fetch full details for a single article.
+Fetch full article detail for a single source:
 
-```ts
-const article = await client.getArticleById("some-article-id");
+- `CryptoDaily`: `{ cryptoSource: CryptoSource.CryptoDaily; url: string }`
+- `Decrypt`: `{ cryptoSource: CryptoSource.Decrypt; id: string }`
+- Others: `{ cryptoSource: CryptoSource.<Source>; slug: string }`
 
-console.log(article.title);
-console.log(article.sentiment);
-console.log(article.content);
-```
+---
+
+### `client.getSentiment(options)`
+
+Returns sentiment summary for a source: `{ interval, totalArticles, sentimentSummary }`. Requires `interval` (e.g. `1d`, `3h`) and optional `category` depending on source.
+
+---
+
+### `client.getArticles(interval)`
+
+Aggregated articles across all sources (ULTRA/MEGA plans). `interval` is required (e.g. `3h`). Returns `Article[]`.
+
+### `client.getArticlesSentiment(interval)`
+
+Aggregated sentiment across all sources. `interval` required.
 
 ---
 
@@ -243,7 +232,7 @@ All methods throw on HTTP or API-level errors.
 
 ```ts
 try {
-  const result = await client.getNews({ source: "coindesk" });
+  const result = await client.getNews({ cryptoSource: CryptoSource.CoinDesk });
   console.log(result.articles.length);
 } catch (err: any) {
   // Example:
@@ -263,7 +252,8 @@ You can also inspect `err.response` when using Axios under the hood (depending o
 This SDK is written in **TypeScript** and ships its own type definitions:
 
 ```ts
-import type { GetNewsParams, NewsArticle } from "@z-scraper/crypto-api";
+import { CryptoSource } from "@z-scraper/crypto-api";
+import type { IOptionNews, IArticlesResponse } from "@z-scraper/crypto-api";
 ```
 
 You get autocompletion and type checking out of the box in modern editors.

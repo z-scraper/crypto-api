@@ -24,9 +24,17 @@
   "author": "Z (z-scraper)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "type": "module",
   "scripts": {
     "build": "tsc -p .",
