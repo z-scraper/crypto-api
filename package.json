@@ -42,6 +42,9 @@
   ],
   "sideEffects": false,
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc --noEmit && tsup src/index.ts --format cjs,esm --dts --clean",
     "prepare": "npm run build",
