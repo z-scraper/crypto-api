@@ -1,6 +1,11 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
-import { HTTP_DEFAULT_BASE_URL, HTTP_DEFAULT_TIMEOUT } from './constants/http.js';
+import {
+  HTTP_DEFAULT_BASE_URL,
+  HTTP_DEFAULT_TIMEOUT,
+  HTTP_LIMIT_DEFAULT,
+  HTTP_PAGE_DEFAULT,
+} from './constants/http.js';
 import { Routes } from './constants/routes.js';
 import { ClientErrorType } from './enums/errors.js';
 import { ResponseStatus } from './enums/response.js';
@@ -167,8 +172,7 @@ export class HttpClient {
       const response = await this.axiosInstance.get<IResponse<T>>(url, {
         params,
         headers: {
-          'x-api-key': this.apiKey,
-          'x-rapidapi-key': this.apiKey,
+          'X-RapidAPI-Key': this.apiKey,
         },
       });
       const { data } = response;
@@ -204,39 +208,21 @@ export class HttpClient {
   }
 
   private async fetchPaginated(url: string, params?: unknown): Promise<IPaginatedArticles> {
-    const payload = await this.request<IPaginatedArticles>(url, params);
-    return this.mapPaginatedArticles(payload);
+    if (!(params as Record<string, unknown>)?.page) {
+      (params as Record<string, unknown>).page = HTTP_PAGE_DEFAULT;
+    }
+    if (!(params as Record<string, unknown>)?.limit) {
+      (params as Record<string, unknown>).limit = HTTP_LIMIT_DEFAULT;
+    }
+    return await this.request<IPaginatedArticles>(url, params);
   }
 
   private async fetchArticleDetail(url: string, params?: unknown): Promise<IArticleDetail> {
-    const payload = await this.request<IArticleDetail>(url, params);
-    return this.mapArticleDetail(payload);
+    return await this.request<IArticleDetail>(url, params);
   }
 
   private async fetchArticles(url: string, params?: unknown): Promise<IArticle[]> {
-    const payload = await this.request<IArticle[]>(url, params);
-    return payload.map((article) => this.mapArticle(article));
-  }
-
-  private mapPaginatedArticles(payload: IPaginatedArticles): IPaginatedArticles {
-    return {
-      ...payload,
-      data: payload.data?.map((article) => this.mapArticle(article)),
-    };
-  }
-
-  private mapArticleDetail(detail: IArticleDetail): IArticleDetail {
-    return {
-      ...detail,
-      publishedAt: detail.publishedAt ? new Date(detail.publishedAt) : detail.publishedAt,
-    };
-  }
-
-  private mapArticle(article: IArticle): IArticle {
-    return {
-      ...article,
-      time: article.time ? new Date(article.time) : article.time,
-    };
+    return await this.request<IArticle[]>(url, params);
   }
 
   private ensureRequired(value: string | undefined, field: string): void {

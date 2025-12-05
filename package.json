@@ -22,13 +22,13 @@
   "homepage": "https://github.com/z-scraper/crypto-api#readme",
   "license": "MIT",
   "author": "Z (z-scraper)",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -37,7 +37,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "prepare": "npm run build",
     "test": "echo \"No tests specified\" && exit 0",
     "lint": "eslint .",
@@ -56,6 +56,7 @@
     "globals": "^16.5.0",
     "nock": "^14.0.10",
     "prettier": "^3.7.4",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1",
     "vitest": "^4.0.15"
