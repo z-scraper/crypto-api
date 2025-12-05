@@ -12,6 +12,7 @@ The SDK is designed for:
 - 🧠 **Trading bots** that use news + sentiment as signals
 - 📊 **Dashboards & alerting systems**
 - 📚 **Research tools & data pipelines**
+- 🧪 Local development with **100% unit test coverage** (Vitest + coverage thresholds)
 
 ---
 
@@ -22,7 +23,8 @@ The SDK is designed for:
 - 🧠 **AI-powered sentiment** per article
 - 🧩 Easy filter parameters (source, sentiment, date range, limit…)
 - ✅ First-class **TypeScript types**
-- 🧪 Built-in support for **unit tests** (Vitest + Nock)
+- 🛡️ Typed errors for API, HTTP, network, and config issues
+- 🧪 Built-in support for **unit tests** (Vitest with coverage thresholds)
 
 ---
 
@@ -156,6 +158,12 @@ interface CryptoClientOptions {
 }
 ```
 
+Defaults used internally:
+
+- `baseURL`: `https://z-crypto-news.p.rapidapi.com`
+- `timeout`: `10000` ms
+- Pagination fallback: `page = 1`, `limit = 10`
+
 ---
 
 ### `client.getNews(options)`
@@ -192,6 +200,30 @@ Aggregated articles across all sources (ULTRA/MEGA plans). `interval` is require
 ### `client.getArticlesSentiment(interval)`
 
 Aggregated sentiment across all sources. `interval` required.
+
+---
+
+## Supported sources & enums
+
+The SDK exposes enums to keep your calls type-safe:
+
+- `CryptoSource`: `Bitcoinist`, `CoinDesk`, `Cointelegraph`, `CryptoDaily`, `CryptoNews`, `Decrypt`
+- Categories: `BitcoinistCategory`, `CoinDeskCategory`, `CointelegraphCategory`, `CryptoDailyCategory`, `CryptoNewsCategory`, `DecryptCategory`
+- Sentiment: `SentimentType` (`POSITIVE`, `NEUTRAL`, `NEGATIVE`)
+- Response status: `ResponseStatus` (`SUCCESS`, `ERROR`)
+- Content blocks in rich article bodies: `ContentBlockType` (`HEADING`, `PARAGRAPH`, `IMAGE`, etc.)
+
+Example:
+
+```ts
+import { CryptoSource, BitcoinistCategory } from "@z-scraper/crypto-api";
+
+await client.getNews({
+  cryptoSource: CryptoSource.Bitcoinist,
+  category: BitcoinistCategory.BITCOIN_PRICE,
+  limit: 5,
+});
+```
 
 ---
 
@@ -281,14 +313,14 @@ npm run test
 src/
   index.ts
   client.ts
-test/
-  unit/
-    client.test.ts
-  integration/
-    client.integration.test.ts
+tests/
+  http-client.test.ts
+  client.test.ts
+  index.test.ts
 ```
 
 - **Unit tests** mock HTTP requests and do **not** hit the real API.
+- Coverage thresholds are enforced at **95%+** (current suite is 100% statements/lines).
 - **Integration tests** (optional) can call the real API using `RAPIDAPI_KEY` from your environment.
 
 ---
