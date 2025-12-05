@@ -7,7 +7,7 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     coverage: {
       reporter: ['text', 'lcov'],
-      provider: 'v8',
+      provider: 'istanbul',
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/types/**'],
       thresholds: {

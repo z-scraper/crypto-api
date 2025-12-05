@@ -46,14 +46,14 @@ pnpm add @z-scraper/crypto-api
 
 ### 1. Get your RapidAPI key
 
-1. Go to the **Crypto API** listing on RapidAPI
+1. Go to the **[Crypto API](https://rapidapi.com/zscraper/api/z-crypto-news)** listing on RapidAPI
 2. Subscribe to a plan
 3. Copy your `x-rapidapi-key`
 
 ### 2. Create a client
 
 ```ts
-import { CryptoClient } from "@z-scraper/crypto-api";
+import { CryptoClient } from '@z-scraper/crypto-api';
 
 const client = new CryptoClient({
   apiKey: process.env.RAPIDAPI_KEY as string,
@@ -69,7 +69,7 @@ const client = new CryptoClient({
 ### Fetch latest news from a source
 
 ```ts
-import { CryptoClient, CryptoSource } from "@z-scraper/crypto-api";
+import { CryptoClient, CryptoSource } from '@z-scraper/crypto-api';
 
 async function main() {
   const client = new CryptoClient({
@@ -91,11 +91,11 @@ main().catch(console.error);
 ### Get sentiment for a source
 
 ```ts
-import { CryptoSource } from "@z-scraper/crypto-api";
+import { CryptoSource } from '@z-scraper/crypto-api';
 
 const sentiment = await client.getSentiment({
   cryptoSource: CryptoSource.CoinDesk,
-  interval: "1d",
+  interval: '1d',
 });
 
 console.log(sentiment.sentimentSummary);
@@ -104,11 +104,11 @@ console.log(sentiment.sentimentSummary);
 ### Fetch article detail
 
 ```ts
-import { CryptoSource } from "@z-scraper/crypto-api";
+import { CryptoSource } from '@z-scraper/crypto-api';
 
 const article = await client.getNewsDetail({
   cryptoSource: CryptoSource.Cointelegraph,
-  slug: "bitcoin-price-surges-to-new-high",
+  slug: 'bitcoin-price-surges-to-new-high',
 });
 
 console.log(article.title);
@@ -118,7 +118,7 @@ console.log(article.content);
 ### Get aggregated articles (all sources)
 
 ```ts
-const articles = await client.getArticles("3h");
+const articles = await client.getArticles('3h');
 console.log(articles.length);
 ```
 
@@ -216,7 +216,7 @@ The SDK exposes enums to keep your calls type-safe:
 Example:
 
 ```ts
-import { CryptoSource, BitcoinistCategory } from "@z-scraper/crypto-api";
+import { CryptoSource, BitcoinistCategory } from '@z-scraper/crypto-api';
 
 await client.getNews({
   cryptoSource: CryptoSource.Bitcoinist,
@@ -252,7 +252,7 @@ If you run your own gateway / proxy:
 ```ts
 const client = new CryptoClient({
   apiKey: process.env.RAPIDAPI_KEY as string,
-  baseURL: "https://my-proxy.example.com/crypto-api",
+  baseURL: 'https://my-proxy.example.com/crypto-api',
 });
 ```
 
@@ -271,7 +271,7 @@ try {
   // - invalid API key
   // - rate limit exceeded
   // - network error, etc.
-  console.error("Crypto API request failed:", err.message || err);
+  console.error('Crypto API request failed:', err.message || err);
 }
 ```
 
@@ -284,8 +284,8 @@ You can also inspect `err.response` when using Axios under the hood (depending o
 This SDK is written in **TypeScript** and ships its own type definitions:
 
 ```ts
-import { CryptoSource } from "@z-scraper/crypto-api";
-import type { IOptionNews, IArticlesResponse } from "@z-scraper/crypto-api";
+import { CryptoSource } from '@z-scraper/crypto-api';
+import type { IOptionNews, IArticlesResponse } from '@z-scraper/crypto-api';
 ```
 
 You get autocompletion and type checking out of the box in modern editors.
@@ -322,6 +322,35 @@ tests/
 - **Unit tests** mock HTTP requests and do **not** hit the real API.
 - Coverage thresholds are enforced at **95%+** (current suite is 100% statements/lines).
 - **Integration tests** (optional) can call the real API using `RAPIDAPI_KEY` from your environment.
+
+---
+
+## Coverage reporting (Coveralls)
+
+This repo is configured to push coverage to Coveralls from the generated `coverage/lcov.info`.
+
+```bash
+export COVERALLS_REPO_TOKEN=your_token   # if not using CI service injection
+npm run report:coveralls
+```
+
+In CI (GitHub Actions, etc.), make sure `COVERALLS_REPO_TOKEN` or the relevant CI-specific token is available and that `npm run report:coveralls` runs after tests.
+
+---
+
+## CI/CD
+
+GitHub Actions workflow (`.github/workflows/ci.yml`) covers:
+
+- PRs and pushes to `main` / `develop`: install, run tests with coverage, send `coverage/lcov.info` to Coveralls.
+- Tags starting with `v*`: repeat tests/coverage then publish to npm.
+
+Required secrets:
+
+- `COVERALLS_REPO_TOKEN` – for Coveralls uploads (public repos may work with `GITHUB_TOKEN`, but set this for private repos).
+- `NPM_TOKEN` – npm access token with publish rights.
+
+To release: create a tag `vX.Y.Z` (aligned with `package.json` version) and push it; the workflow will publish automatically.
 
 ---
 

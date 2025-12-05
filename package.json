@@ -49,6 +49,7 @@
     "build": "tsc --noEmit && tsup src/index.ts --format cjs,esm --dts --clean",
     "prepare": "npm run build",
     "test": "vitest run --coverage",
+    "report:coveralls": "vitest run --coverage && coveralls < coverage/lcov.info",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
@@ -60,7 +61,8 @@
     "@eslint/js": "^9.39.1",
     "@types/nock": "^10.0.3",
     "@types/node": "^24.10.1",
-    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/coverage-istanbul": "^4.0.15",
+    "coveralls": "^3.1.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
