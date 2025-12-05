@@ -7,8 +7,6 @@
 [![CI](https://github.com/z-scraper/crypto-api/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/z-scraper/crypto-api/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/z-scraper/crypto-api/badge.svg?branch=main)](https://coveralls.io/github/z-scraper/crypto-api?branch=main)
 [![License](https://img.shields.io/github/license/z-scraper/crypto-api.svg)](https://github.com/z-scraper/crypto-api/blob/main/LICENSE)
-![TypeScript](https://img.shields.io/badge/TypeScript-✅-blue)
-
 The `@z-scraper/crypto-api` package provides a simple, type-safe client for the **Crypto API**, which aggregates cryptocurrency news from multiple major sources and enriches it with **AI sentiment (positive / negative / neutral)**.
 
 The SDK is designed for:
