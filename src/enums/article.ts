@@ -1,0 +1,121 @@
+/**
+ * Categories available for Bitcoinist news.
+ */
+export enum BitcoinistCategory {
+  BITCOIN = 'BITCOIN',
+  BITCOIN_PRICE = 'BITCOIN_PRICE',
+  BITCOIN_BUSINESSES = 'BITCOIN_BUSINESSES',
+  BITCOIN_ACCEPTANCE = 'BITCOIN_ACCEPTANCE',
+  BITCOIN_TECHNOLOGY = 'BITCOIN_TECHNOLOGY',
+  BITCOIN_INVESTMENT = 'BITCOIN_INVESTMENT',
+  BITCOIN_REGULATION = 'BITCOIN_REGULATION',
+  BITCOIN_REVIEWS = 'BITCOIN_REVIEWS',
+  ALTCOINS = 'ALTCOINS',
+  ALTCOINS_PRICE = 'ALTCOINS_PRICE',
+  ETHEREUM = 'ETHEREUM',
+  RIPPLE = 'RIPPLE',
+  LITECOIN = 'LITECOIN',
+  EOS = 'EOS',
+  NAGA = 'NAGA',
+  BLOCKCHAIN = 'BLOCKCHAIN',
+  BITCOIN_SECURITY = 'BITCOIN_SECURITY',
+  FIN_TECH = 'FIN_TECH',
+  INDUSTRY = 'INDUSTRY',
+}
+
+/**
+ * Categories available for CoinDesk news.
+ */
+export enum CoinDeskCategory {
+  MARKETS = 'MARKETS',
+  BUSINESS = 'BUSINESS',
+  TECH = 'TECH',
+  POLICY = 'POLICY',
+}
+
+/**
+ * Categories available for Cointelegraph news.
+ */
+export enum CointelegraphCategory {
+  BITCOIN = 'BITCOIN',
+  MARKETS = 'MARKETS',
+  ETHEREUM = 'ETHEREUM',
+  ALTCOIN = 'ALTCOIN',
+  BLOCKCHAIN = 'BLOCKCHAIN',
+  REGULATION = 'REGULATION',
+  OPINION = 'OPINION',
+  INTERVIEW = 'INTERVIEW',
+  INVESTIGATION = 'INVESTIGATION',
+  FEATURES = 'FEATURES',
+  HOW_TO = 'HOW-TO',
+}
+
+/**
+ * Categories available for CryptoDaily news.
+ */
+export enum CryptoDailyCategory {
+  BITCOIN = 'BITCOIN',
+  ETHEREUM = 'ETHEREUM',
+  DEFI = 'DEFI',
+  ALTCOINS = 'ALTCOINS',
+  TRADING = 'TRADING',
+  TECHNOLOGY = 'TECHNOLOGY',
+  BUSINESS = 'BUSINESS',
+  OPINION = 'OPINION',
+  WEB3 = 'WEB3',
+  SECURITY = 'SECURITY',
+  PR = 'PR',
+  REGULATION = 'REGULATION',
+  GAMBLING = 'GAMBLING',
+  WALLETS = 'WALLETS',
+  CRYPTO_EXCHANGE = 'CRYPTO_EXCHANGE',
+  LENDING = 'LENDING',
+  MINING = 'MINING',
+}
+
+/**
+ * Categories available for CryptoNews news.
+ */
+export enum CryptoNewsCategory {
+  BITCOIN = 'BITCOIN',
+  ETHEREUM = 'ETHEREUM',
+  BLOCKCHAIN = 'BLOCKCHAIN',
+  DEFI = 'DEFI',
+  ALTCOIN = 'ALTCOIN',
+  REGULATION = 'REGULATION',
+  SOLANA = 'SOLANA',
+  SHIBA = 'SHIBA',
+  FEATURE = 'FEATURE',
+  OPINION = 'OPINION',
+  FOLLOW_UP = 'FOLLOW_UP',
+  MARKET = 'MARKET',
+  SPONSORED = 'SPONSORED',
+  XRP = 'XRP',
+  LEARN = 'LEARN',
+  INTERVIEW = 'INTERVIEW',
+  PREDICTION = 'PREDICTION',
+}
+
+/**
+ * Categories available for Decrypt news.
+ */
+export enum DecryptCategory {
+  NEWS = 'NEWS',
+  BUSINESS = 'BUSINESS',
+  ARTIFICIAL_INTELLIGENCE = 'ARTIFICIAL_INTELLIGENCE',
+  TECHNOLOGY = 'TECHNOLOGY',
+  NFT = 'NFT',
+  CRYPTOCURRENCIES = 'CRYPTOCURRENCIES',
+  DEFI = 'DEFI',
+  GAMING = 'GAMING',
+  MARKETS = 'MARKETS',
+  OPINION = 'OPINION',
+}
+
+/**
+ * Sort options for Decrypt news.
+ */
+export enum DecryptSort {
+  PUBLISHED = 'PUBLISHED',
+  SCORE = 'SCORE',
+}

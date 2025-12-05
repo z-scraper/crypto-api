@@ -1,0 +1,9 @@
+node_modules
+src
+tests
+vitest.config.ts
+tsconfig.json
+eslint.config.ts
+.DS_Store
+*.log
+npm-debug.log*
