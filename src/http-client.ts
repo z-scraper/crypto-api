@@ -184,6 +184,10 @@ export class HttpClient {
 
       return data.data;
     } catch (error) {
+      if (error instanceof ClientError) {
+        throw error;
+      }
+
       if (axios.isAxiosError(error)) {
         if (error.response) {
           throw new ClientHttpError({

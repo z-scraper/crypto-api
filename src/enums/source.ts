@@ -1,3 +1,6 @@
+/**
+ * Supported cryptocurrency news sources.
+ */
 export enum CryptoSource {
   Bitcoinist = 'BITCOINIST',
   CoinDesk = 'COIN_DESK',

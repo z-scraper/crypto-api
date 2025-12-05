@@ -26,11 +26,20 @@ import type {
   IQueryDecrypt,
   IQueryDecryptSentiment,
   ISentimentResult,
-} from './types/response.js';
+} from './types/response';
 
+/**
+ * The main client class for interacting with the Crypto API.
+ * Provides methods to fetch aggregated news, article details, and sentiment analysis.
+ */
 export class CryptoClient implements IClient {
   private readonly httpClient: HttpClient;
 
+  /**
+   * Creates a new instance of CryptoClient.
+   * @param options - Configuration options for the client.
+   * @throws {ClientConfigError} If the API key is missing.
+   */
   constructor(options: IClientOptions) {
     if (!options.apiKey) throw new ClientConfigError({ message: 'apiKey is required' });
 
@@ -41,14 +50,30 @@ export class CryptoClient implements IClient {
     });
   }
 
+  /**
+   * Fetches aggregated articles for a specific time interval.
+   * @param interval - The time interval to fetch articles for (e.g., '1d', '1w').
+   * @returns A promise that resolves to an array of articles.
+   */
   getArticles(interval: string): Promise<IArticle[]> {
     return this.httpClient.getArticles({ interval });
   }
 
+  /**
+   * Fetches aggregated sentiment analysis for a specific time interval.
+   * @param interval - The time interval for sentiment analysis.
+   * @returns A promise that resolves to the sentiment result.
+   */
   getArticlesSentiment(interval: string): Promise<ISentimentResult> {
     return this.httpClient.getArticlesSentiment({ interval });
   }
 
+  /**
+   * Fetches news articles from a specific source with optional filters.
+   * @param options - Options specifying the source and filters (e.g., category, limit).
+   * @returns A promise that resolves to a paginated response of articles.
+   * @throws {ClientError} If the crypto source is invalid.
+   */
   getNews(options: IOptionNews): Promise<IArticlesResponse> {
     const { cryptoSource, ...params } = options;
 
@@ -73,6 +98,12 @@ export class CryptoClient implements IClient {
     }
   }
 
+  /**
+   * Fetches the details of a specific article from a supported source.
+   * @param options - Options identifying the article (source and slug/id/url).
+   * @returns A promise that resolves to the article details.
+   * @throws {ClientError} If the crypto source is invalid.
+   */
   getNewsDetail(options: IOptionNewsDetail): Promise<IArticleDetail> {
     switch (options.cryptoSource) {
       case CryptoSource.CryptoDaily:
@@ -93,6 +124,12 @@ export class CryptoClient implements IClient {
     }
   }
 
+  /**
+   * Fetches sentiment analysis for a specific source and interval.
+   * @param options - Options specifying the source, interval, and optional category.
+   * @returns A promise that resolves to the sentiment result.
+   * @throws {ClientError} If the crypto source is invalid.
+   */
   getSentiment(options: IOptionSentiment): Promise<ISentimentResult> {
     const { cryptoSource, ...params } = options;
 

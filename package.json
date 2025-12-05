@@ -39,7 +39,7 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "prepare": "npm run build",
-    "test": "echo \"No tests specified\" && exit 0",
+    "test": "vitest run --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
@@ -51,6 +51,7 @@
     "@eslint/js": "^9.39.1",
     "@types/nock": "^10.0.3",
     "@types/node": "^24.10.1",
+    "@vitest/coverage-v8": "^4.0.15",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",

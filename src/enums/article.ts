@@ -1,3 +1,6 @@
+/**
+ * Categories available for Bitcoinist news.
+ */
 export enum BitcoinistCategory {
   BITCOIN = 'BITCOIN',
   BITCOIN_PRICE = 'BITCOIN_PRICE',
@@ -20,6 +23,9 @@ export enum BitcoinistCategory {
   INDUSTRY = 'INDUSTRY',
 }
 
+/**
+ * Categories available for CoinDesk news.
+ */
 export enum CoinDeskCategory {
   MARKETS = 'MARKETS',
   BUSINESS = 'BUSINESS',
@@ -27,6 +33,9 @@ export enum CoinDeskCategory {
   POLICY = 'POLICY',
 }
 
+/**
+ * Categories available for Cointelegraph news.
+ */
 export enum CointelegraphCategory {
   BITCOIN = 'BITCOIN',
   MARKETS = 'MARKETS',
@@ -41,6 +50,9 @@ export enum CointelegraphCategory {
   HOW_TO = 'HOW-TO',
 }
 
+/**
+ * Categories available for CryptoDaily news.
+ */
 export enum CryptoDailyCategory {
   BITCOIN = 'BITCOIN',
   ETHEREUM = 'ETHEREUM',
@@ -61,6 +73,9 @@ export enum CryptoDailyCategory {
   MINING = 'MINING',
 }
 
+/**
+ * Categories available for CryptoNews news.
+ */
 export enum CryptoNewsCategory {
   BITCOIN = 'BITCOIN',
   ETHEREUM = 'ETHEREUM',
@@ -81,6 +96,9 @@ export enum CryptoNewsCategory {
   PREDICTION = 'PREDICTION',
 }
 
+/**
+ * Categories available for Decrypt news.
+ */
 export enum DecryptCategory {
   NEWS = 'NEWS',
   BUSINESS = 'BUSINESS',
@@ -94,6 +112,9 @@ export enum DecryptCategory {
   OPINION = 'OPINION',
 }
 
+/**
+ * Sort options for Decrypt news.
+ */
 export enum DecryptSort {
   PUBLISHED = 'PUBLISHED',
   SCORE = 'SCORE',
