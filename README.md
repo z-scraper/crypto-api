@@ -7,14 +7,16 @@
 [![CI](https://github.com/z-scraper/crypto-api/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/z-scraper/crypto-api/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/z-scraper/crypto-api/badge.svg?branch=main)](https://coveralls.io/github/z-scraper/crypto-api?branch=main)
 [![License](https://img.shields.io/github/license/z-scraper/crypto-api.svg)](https://github.com/z-scraper/crypto-api/blob/main/LICENSE)
+
+👉 Live API on RapidAPI: **[Crypto API](https://rapidapi.com/zscraper/api/z-crypto-news)**
+
 The `@z-scraper/crypto-api` package provides a simple, type-safe client for the **Crypto API**, which aggregates cryptocurrency news from multiple major sources and enriches it with **AI sentiment (positive / negative / neutral)**.
 
-The SDK is designed for:
+This SDK is designed for developers building:
 
 - 🧠 **Trading bots** that use news + sentiment as signals
 - 📊 **Dashboards & alerting systems**
 - 📚 **Research tools & data pipelines**
-- 🧪 Local development with **100% unit test coverage** (Vitest + coverage thresholds)
 
 ---
 
@@ -23,10 +25,9 @@ The SDK is designed for:
 - 📡 **Single client** for all Crypto API endpoints
 - 📰 **Aggregated news** from multiple sources (e.g. CoinDesk, Cointelegraph, etc.)
 - 🧠 **AI-powered sentiment** per article
-- 🧩 Easy filter parameters (source, sentiment, date range, limit…)
-- ✅ First-class **TypeScript types**
-- 🛡️ Typed errors for API, HTTP, network, and config issues
-- 🧪 Built-in support for **unit tests** (Vitest with coverage thresholds)
+- 🎯 Easy filter parameters (source, sentiment, date range, limit, pagination…)
+- ✅ First-class **TypeScript types** for inputs & responses
+- 🧪 **100% unit test coverage** with Vitest and strict coverage thresholds
 
 ---
 
@@ -48,19 +49,19 @@ pnpm add @z-scraper/crypto-api
 
 ### 1. Get your RapidAPI key
 
-1. Go to the **[Crypto API](https://rapidapi.com/zscraper/api/z-crypto-news)** listing on RapidAPI
+1. Go to the **Crypto API** listing on RapidAPI
 2. Subscribe to a plan
 3. Copy your `x-rapidapi-key`
 
 ### 2. Create a client
 
 ```ts
-import { CryptoClient } from '@z-scraper/crypto-api';
+import { CryptoApiClient } from '@z-scraper/crypto-api';
 
-const client = new CryptoClient({
+const client = new CryptoApiClient({
   apiKey: process.env.RAPIDAPI_KEY as string,
   // Optional: override baseURL if needed
-  // baseURL: "https://your-crypto-api-endpoint",
+  // baseURL: "https://z-crypto-news.p.rapidapi.com",
 });
 ```
 
@@ -68,20 +69,17 @@ const client = new CryptoClient({
 
 ## Quickstart
 
-### Fetch latest news from a source
+### Fetch latest news
 
 ```ts
-import { CryptoClient, CryptoSource } from '@z-scraper/crypto-api';
+import { CryptoApiClient } from '@z-scraper/crypto-api';
 
 async function main() {
-  const client = new CryptoClient({
+  const client = new CryptoApiClient({
     apiKey: process.env.RAPIDAPI_KEY as string,
   });
 
-  const news = await client.getNews({
-    cryptoSource: CryptoSource.Bitcoinist,
-    limit: 20,
-  });
+  const news = await client.getNews();
 
   console.log(`Fetched ${news.articles.length} articles`);
   console.log(news.articles[0]);
@@ -90,38 +88,27 @@ async function main() {
 main().catch(console.error);
 ```
 
-### Get sentiment for a source
+### Filter by source & sentiment
 
 ```ts
-import { CryptoSource } from '@z-scraper/crypto-api';
-
-const sentiment = await client.getSentiment({
-  cryptoSource: CryptoSource.CoinDesk,
-  interval: '1d',
+const res = await client.getNews({
+  source: 'coindesk',
+  sentiment: 'positive',
+  limit: 20,
 });
 
-console.log(sentiment.sentimentSummary);
+for (const article of res.articles) {
+  console.log(`[${article.sentiment}] ${article.title}`);
+}
 ```
 
-### Fetch article detail
+### Fetch a single article by ID
 
 ```ts
-import { CryptoSource } from '@z-scraper/crypto-api';
-
-const article = await client.getNewsDetail({
-  cryptoSource: CryptoSource.Cointelegraph,
-  slug: 'bitcoin-price-surges-to-new-high',
-});
+const article = await client.getArticleById('ARTICLE_ID_HERE');
 
 console.log(article.title);
 console.log(article.content);
-```
-
-### Get aggregated articles (all sources)
-
-```ts
-const articles = await client.getArticles('3h');
-console.log(articles.length);
 ```
 
 ---
@@ -131,16 +118,16 @@ console.log(articles.length);
 > ⚠️ The exact shape of responses and available filters may evolve as the Crypto API grows.  
 > Always refer to the official API docs on RapidAPI for the latest details.
 
-### `CryptoClient`
+### `CryptoApiClient`
 
 ```ts
-new CryptoClient(options: CryptoClientOptions)
+new CryptoApiClient(options: CryptoApiClientOptions)
 ```
 
-#### `CryptoClientOptions`
+#### `CryptoApiClientOptions`
 
 ```ts
-interface CryptoClientOptions {
+interface CryptoApiClientOptions {
   /**
    * Your RapidAPI key for the Crypto API.
    */
@@ -148,7 +135,7 @@ interface CryptoClientOptions {
 
   /**
    * Optional base URL override.
-   * Defaults to the public RapidAPI Crypto API base URL.
+   * Defaults to the public Crypto API base URL.
    */
   baseURL?: string;
 
@@ -156,75 +143,70 @@ interface CryptoClientOptions {
    * Optional request timeout in milliseconds.
    * Default: 10_000 (10 seconds)
    */
-  timeout?: number;
+  timeoutMs?: number;
 }
 ```
 
-Defaults used internally:
-
-- `baseURL`: `https://z-crypto-news.p.rapidapi.com`
-- `timeout`: `10000` ms
-- Pagination fallback: `page = 1`, `limit = 10`
-
 ---
 
-### `client.getNews(options)`
+### `client.getNews(params?)`
 
-Fetches paginated news for one source. `options.cryptoSource` is required and drives the rest of the params:
-
-- `CryptoSource.Bitcoinist | CoinDesk | Cointelegraph | CryptoDaily | CryptoNews`: supports `page`, `limit`, `search`, and source-specific `category`. CoinDesk/Bitcoinist/CryptoNews also accept `paginationToken`.
-- `CryptoSource.Decrypt`: supports `page`, `limit`, `search`, `category`, `sort`, `isEditorPick`.
-
-Returns `{ articles: Article[]; hasMore: boolean }`. Date-like fields are returned as `Date` instances (`time`, `publishedAt`).
-
----
-
-### `client.getNewsDetail(options)`
-
-Fetch full article detail for a single source:
-
-- `CryptoDaily`: `{ cryptoSource: CryptoSource.CryptoDaily; url: string }`
-- `Decrypt`: `{ cryptoSource: CryptoSource.Decrypt; id: string }`
-- Others: `{ cryptoSource: CryptoSource.<Source>; slug: string }`
-
----
-
-### `client.getSentiment(options)`
-
-Returns sentiment summary for a source: `{ interval, totalArticles, sentimentSummary }`. Requires `interval` (e.g. `1d`, `3h`) and optional `category` depending on source.
-
----
-
-### `client.getArticles(interval)`
-
-Aggregated articles across all sources (ULTRA/MEGA plans). `interval` is required (e.g. `3h`). Returns `Article[]`.
-
-### `client.getArticlesSentiment(interval)`
-
-Aggregated sentiment across all sources. `interval` required.
-
----
-
-## Supported sources & enums
-
-The SDK exposes enums to keep your calls type-safe:
-
-- `CryptoSource`: `Bitcoinist`, `CoinDesk`, `Cointelegraph`, `CryptoDaily`, `CryptoNews`, `Decrypt`
-- Categories: `BitcoinistCategory`, `CoinDeskCategory`, `CointelegraphCategory`, `CryptoDailyCategory`, `CryptoNewsCategory`, `DecryptCategory`
-- Sentiment: `SentimentType` (`POSITIVE`, `NEUTRAL`, `NEGATIVE`)
-- Response status: `ResponseStatus` (`SUCCESS`, `ERROR`)
-- Content blocks in rich article bodies: `ContentBlockType` (`HEADING`, `PARAGRAPH`, `IMAGE`, etc.)
-
-Example:
+Fetches a list of news articles, optionally filtered by source, sentiment, or date range.
 
 ```ts
-import { CryptoSource, BitcoinistCategory } from '@z-scraper/crypto-api';
+interface GetNewsParams {
+  source?: string; // e.g. "coindesk", "cointelegraph"
+  sentiment?: 'positive' | 'negative' | 'neutral';
+  from?: string; // ISO 8601 date, e.g. "2025-01-01"
+  to?: string; // ISO 8601 date
+  limit?: number; // number of articles to return
+  page?: number; // pagination
+}
 
-await client.getNews({
-  cryptoSource: CryptoSource.Bitcoinist,
-  category: BitcoinistCategory.BITCOIN_PRICE,
-  limit: 5,
+interface NewsArticle {
+  id: string;
+  title: string;
+  url: string;
+  source: string;
+  publishedAt: string; // ISO 8601
+  sentiment?: 'positive' | 'negative' | 'neutral';
+  summary?: string;
+  content?: string;
+  [key: string]: unknown;
+}
+
+interface GetNewsResponse {
+  articles: NewsArticle[];
+  total?: number;
+  page?: number;
+  hasMore?: boolean;
+}
+```
+
+**Example:**
+
+```ts
+const result = await client.getNews({
+  source: 'coindesk',
+  sentiment: 'negative',
+  limit: 10,
 });
+
+console.log(result.articles.map((a) => a.title));
+```
+
+---
+
+### `client.getArticleById(id)`
+
+Fetch full details for a single article.
+
+```ts
+const article = await client.getArticleById('some-article-id');
+
+console.log(article.title);
+console.log(article.sentiment);
+console.log(article.content);
 ```
 
 ---
@@ -242,7 +224,7 @@ RAPIDAPI_KEY=your_rapidapi_key_here
 Usage:
 
 ```ts
-const client = new CryptoClient({
+const client = new CryptoApiClient({
   apiKey: process.env.RAPIDAPI_KEY as string,
 });
 ```
@@ -252,7 +234,7 @@ const client = new CryptoClient({
 If you run your own gateway / proxy:
 
 ```ts
-const client = new CryptoClient({
+const client = new CryptoApiClient({
   apiKey: process.env.RAPIDAPI_KEY as string,
   baseURL: 'https://my-proxy.example.com/crypto-api',
 });
@@ -266,7 +248,7 @@ All methods throw on HTTP or API-level errors.
 
 ```ts
 try {
-  const result = await client.getNews({ cryptoSource: CryptoSource.CoinDesk });
+  const result = await client.getNews({ source: 'coindesk' });
   console.log(result.articles.length);
 } catch (err: any) {
   // Example:
@@ -277,7 +259,7 @@ try {
 }
 ```
 
-You can also inspect `err.response` when using Axios under the hood (depending on implementation).
+If you need more control, you can inspect `err.response` when using Axios under the hood (depending on implementation).
 
 ---
 
@@ -286,8 +268,7 @@ You can also inspect `err.response` when using Axios under the hood (depending o
 This SDK is written in **TypeScript** and ships its own type definitions:
 
 ```ts
-import { CryptoSource } from '@z-scraper/crypto-api';
-import type { IOptionNews, IArticlesResponse } from '@z-scraper/crypto-api';
+import type { GetNewsParams, NewsArticle } from '@z-scraper/crypto-api';
 ```
 
 You get autocompletion and type checking out of the box in modern editors.
@@ -315,44 +296,15 @@ npm run test
 src/
   index.ts
   client.ts
-tests/
-  http-client.test.ts
-  client.test.ts
-  index.test.ts
+test/
+  unit/
+    client.test.ts
+  integration/
+    client.integration.test.ts
 ```
 
 - **Unit tests** mock HTTP requests and do **not** hit the real API.
-- Coverage thresholds are enforced at **95%+** (current suite is 100% statements/lines).
 - **Integration tests** (optional) can call the real API using `RAPIDAPI_KEY` from your environment.
-
----
-
-## Coverage reporting (Coveralls)
-
-This repo is configured to push coverage to Coveralls from the generated `coverage/lcov.info`.
-
-```bash
-export COVERALLS_REPO_TOKEN=your_token   # if not using CI service injection
-npm run report:coveralls
-```
-
-In CI (GitHub Actions, etc.), make sure `COVERALLS_REPO_TOKEN` or the relevant CI-specific token is available and that `npm run report:coveralls` runs after tests.
-
----
-
-## CI/CD
-
-GitHub Actions workflow (`.github/workflows/ci.yml`) covers:
-
-- PRs and pushes to `main` / `develop`: install, run tests with coverage, send `coverage/lcov.info` to Coveralls.
-- Tags starting with `v*`: repeat tests/coverage then publish to npm.
-
-Required secrets:
-
-- `COVERALLS_REPO_TOKEN` – for Coveralls uploads (public repos may work with `GITHUB_TOKEN`, but set this for private repos).
-- `NPM_TOKEN` – npm access token with publish rights.
-
-To release: create a tag `vX.Y.Z` (aligned with `package.json` version) and push it; the workflow will publish automatically.
 
 ---
 
@@ -360,7 +312,7 @@ To release: create a tag `vX.Y.Z` (aligned with `package.json` version) and push
 
 The SDK currently follows **0.x** versioning while the API and client surface are being refined.
 
-- `0.0.1`: prototype / internal testing
+- `0.0.x`: prototype / internal testing
 - `0.1.x`: early public use, **breaking changes possible**
 - `1.x`: stable, semver guarantees for the public API surface
 
@@ -373,6 +325,7 @@ Breaking changes in `0.x` may happen without a major version bump. Check the cha
 Planned improvements:
 
 - ✅ Basic news listing & article detail helpers
+- ✅ 100% unit test coverage with strict thresholds
 - ⏳ Convenience methods for sentiment-only / summary views
 - ⏳ Built-in pagination helpers
 - ⏳ Additional utilities for trading-bot workflows

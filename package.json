@@ -1,6 +1,6 @@
 {
   "name": "@z-scraper/crypto-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A TypeScript/JavaScript SDK for the Crypto API that lets you fetch aggregated crypto news from multiple sources and AI-powered sentiment analysis through RapidAPI with minimal setup.",
   "keywords": [
     "crypto",
